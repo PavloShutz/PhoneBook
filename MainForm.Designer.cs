@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             panelCategory = new Panel();
             label6 = new Label();
             textBoxEmail = new TextBox();
@@ -44,6 +45,7 @@
             label1 = new Label();
             dataGridViewCallers = new DataGridView();
             CallerId = new DataGridViewTextBoxColumn();
+            Bytes = new DataGridViewImageColumn();
             nameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             numberDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             emailDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
@@ -187,7 +189,7 @@
             dataGridViewCallers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewCallers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridViewCallers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCallers.Columns.AddRange(new DataGridViewColumn[] { CallerId, nameDataGridViewTextBoxColumn, numberDataGridViewTextBoxColumn, emailDataGridViewTextBoxColumn, addressDataGridViewTextBoxColumn });
+            dataGridViewCallers.Columns.AddRange(new DataGridViewColumn[] { CallerId, Bytes, nameDataGridViewTextBoxColumn, numberDataGridViewTextBoxColumn, emailDataGridViewTextBoxColumn, addressDataGridViewTextBoxColumn });
             dataGridViewCallers.DataSource = callersBindingSource;
             dataGridViewCallers.Dock = DockStyle.Fill;
             dataGridViewCallers.Location = new Point(207, 0);
@@ -205,6 +207,14 @@
             CallerId.MinimumWidth = 6;
             CallerId.Name = "CallerId";
             CallerId.Visible = false;
+            // 
+            // Bytes
+            // 
+            Bytes.DataPropertyName = "Bytes";
+            Bytes.HeaderText = "Аватар";
+            Bytes.MinimumWidth = 6;
+            Bytes.Name = "Bytes";
+            Bytes.ReadOnly = true;
             // 
             // nameDataGridViewTextBoxColumn
             // 
@@ -271,7 +281,9 @@
             Controls.Add(dataGridViewCallers);
             Controls.Add(panelCategory);
             Controls.Add(panel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Адресна книга";
             Load += MainForm_Load;
             panelCategory.ResumeLayout(false);
@@ -294,11 +306,6 @@
         private ComboBox comboBoxCategory;
         private BindingSource categoryBindingSource;
         private BindingSource callersBindingSource;
-        private DataGridViewTextBoxColumn CallerId;
-        private DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn numberDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn emailDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn addressDataGridViewTextBoxColumn;
         private Button buttonAddCaller;
         private Panel panel1;
         public DataGridView dataGridViewCallers;
@@ -306,5 +313,11 @@
         private TextBox textBoxAddress;
         private Label label6;
         private TextBox textBoxEmail;
+        private DataGridViewTextBoxColumn CallerId;
+        private DataGridViewImageColumn Bytes;
+        private DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn numberDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn emailDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn addressDataGridViewTextBoxColumn;
     }
 }

@@ -1,4 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using System.Collections;
+using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
+
 
 namespace Phone_Book
 {
@@ -34,9 +39,13 @@ namespace Phone_Book
         private void CallerEditForm_Load(object sender, EventArgs e)
         {
             this.maskedTextBoxNumber.Mask = "(+00)-000-000-0000";
-
             this.maskedTextBoxNumber.MaskInputRejected += new MaskInputRejectedEventHandler(maskedTextBoxNumber_MaskInputRejected);
             this.maskedTextBoxNumber.KeyDown += new KeyEventHandler(maskedTextBoxNumber_KeyDown);
+
+            var caller = mainForm.dbContext.Callers.Single(c => c.CallerId == _callerId);
+
+            this.pictureBoxIcon.SizeMode = PictureBoxSizeMode.CenterImage;
+            this.pictureBoxIcon.Image = Caller.BytesArrayToPhoto(caller.Bytes).ToBitmap();
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -74,7 +83,11 @@ namespace Phone_Book
             caller.Number = this.maskedTextBoxNumber.Text.ToString();
             caller.CategoryId = (int)this.comboBoxCategory.SelectedValue;
             caller.Category = (Category)this.comboBoxCategory.SelectedItem;
-            
+            Bitmap bitmap = new Bitmap(this.pictureBoxIcon.Image);
+            IntPtr hicon = bitmap.GetHicon();
+            Icon icon = Icon.FromHandle(hicon);
+            caller.Bytes = Caller.PhotoToBytes(icon);
+
             mainForm.dbContext.SaveChanges();
 
             mainForm.UpdateCallersList();
@@ -119,5 +132,20 @@ namespace Phone_Book
         }
 
         #endregion
+
+        private void CallerEditForm_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MessageBox.Show("Аби змінити аватар, натисніть на картинку.", "Допомога", MessageBoxButtons.OK);
+            e.Cancel = true;
+        }
+
+        private void pictureBoxIcon_Click(object sender, EventArgs e)
+        {
+            if (this.openFileDialogIcon.ShowDialog() == DialogResult.OK)
+            {
+                var photo = new Icon(this.openFileDialogIcon.FileName);
+                this.pictureBoxIcon.Image = photo.ToBitmap();
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Google.Apis.PeopleService.v1.Data;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.VisualBasic;
 
 namespace Phone_Book
@@ -7,10 +8,19 @@ namespace Phone_Book
     public partial class AddCallerForm : Form
     {
         private MainForm? mainForm = null;
+        
+        byte[] icon1 = Caller.PhotoToBytes(new Icon("icons\\ico\\1.ico"));
+        byte[] icon2 = Caller.PhotoToBytes(new Icon("icons\\ico\\2.ico"));
+        byte[] icon3 = Caller.PhotoToBytes(new Icon("icons\\ico\\3.ico"));
+        byte[] icon4 = Caller.PhotoToBytes(new Icon("icons\\ico\\4.ico"));
+        byte[] icon5 = Caller.PhotoToBytes(new Icon("icons\\ico\\5.ico"));
+        byte[][] icons;
 
         public AddCallerForm(MainForm form)
         {
             this.mainForm = form;
+            icons = new byte[][]{ icon1, icon2, icon3, icon4, icon5 };
+
             InitializeComponent();
         }
 
@@ -27,9 +37,13 @@ namespace Phone_Book
         private void AddCallerForm_Load(object sender, EventArgs e)
         {
             this.maskedTextBoxNumber.Mask = "(+00)-000-000-0000";
-
             this.maskedTextBoxNumber.MaskInputRejected += new MaskInputRejectedEventHandler(maskedTextBoxNumber_MaskInputRejected);
             this.maskedTextBoxNumber.KeyDown += new KeyEventHandler(maskedTextBoxNumber_KeyDown);
+
+            Random rnd = new Random();
+
+            this.pictureBoxIcon.SizeMode = PictureBoxSizeMode.CenterImage;
+            this.pictureBoxIcon.Image = Caller.BytesArrayToPhoto(icons[rnd.Next(icons.Length)]).ToBitmap();
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -122,6 +136,10 @@ namespace Phone_Book
             caller.Number = this.maskedTextBoxNumber.Text.ToString();
             caller.CategoryId = (int)this.comboBoxCategory.SelectedValue;
             caller.Category = (Category)this.comboBoxCategory.SelectedItem;
+            Bitmap bitmap = new Bitmap(this.pictureBoxIcon.Image);
+            IntPtr hicon = bitmap.GetHicon();
+            Icon icon = Icon.FromHandle(hicon);
+            caller.Bytes = Caller.PhotoToBytes(icon);
 
             mainForm.dbContext.Add(caller);
             mainForm.dbContext.SaveChanges();
@@ -153,6 +171,15 @@ namespace Phone_Book
                 mainForm.dbContext.Categories.Add(new Category { Name = input });
                 mainForm.dbContext.SaveChanges();
                 updateCategoryComboBoxList(this.comboBoxCategory.Items.Count);
+            }
+        }
+
+        private void pictureBoxIcon_Click(object sender, EventArgs e)
+        {
+            if (this.openFileDialogIcon.ShowDialog() == DialogResult.OK)
+            {
+                var photo = new Icon(this.openFileDialogIcon.FileName);
+                this.pictureBoxIcon.Image = photo.ToBitmap();
             }
         }
     }

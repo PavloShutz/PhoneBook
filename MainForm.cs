@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Phone_Book
 {
@@ -13,11 +14,23 @@ namespace Phone_Book
             InitializeComponent();
         }
 
+        [Conditional("DEBUG")]
+        private void SetDebugMode(ref bool isDebug)
+        {
+            isDebug = true;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             this.dbContext = new CallersContext();
 
-            this.dbContext.Database.EnsureDeleted();
+            bool isDebug = false;
+            SetDebugMode(ref isDebug);
+
+            if (isDebug)
+            {
+                this.dbContext.Database.EnsureDeleted();
+            }
             this.dbContext.Database.EnsureCreated();
 
             this.dbContext.Categories.Load();
@@ -40,6 +53,7 @@ namespace Phone_Book
         private void MainForm_Load(object sender, EventArgs e)
         {
             this.comboBoxCategory.SelectedItem = this.dbContext.Categories.Single(c => c.CategoryId == 1);
+
             AddColumns();
         }
 
